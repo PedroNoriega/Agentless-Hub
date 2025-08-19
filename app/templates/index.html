@@ -1,12 +1,15 @@
 {% extends "base.html" %}
 {% block content %}
+
 <div class="flex justify-between items-center mb-6">
   <div class="flex items-center gap-3">
     <h2 class="text-xl font-medium">Monitored Servers</h2>
-    <span class="px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-sm font-medium">{{ hosts|length }} Active</span>
+    <span class="px-2.5 py-1 rounded-full bg-emerald-500/10 text-emerald-400 text-sm font-medium">
+      {{ hosts|length }} Active
+    </span>
   </div>
   <div class="flex items-center gap-4 text-sm">
-    <span class="text-neutral-400">Auto-refresh: 10s</span>
+    <span class="text-neutral-400">Auto-refresh:</span>
     <select id="refresh-interval" class="bg-neutral-800 border border-neutral-700 rounded-lg px-2 py-1">
       <option value="5000">5s</option>
       <option value="10000" selected>10s</option>
@@ -19,7 +22,7 @@
 <div id="servers-grid" class="grid grid-cols-1 2xl:grid-cols-2 gap-6">
   {% for h in hosts %}
   <section class="rounded-2xl bg-neutral-900/50 border border-neutral-800 shadow-lg backdrop-blur">
-    <!-- Header -->
+    <!-- Card header -->
     <div class="p-4 flex items-center justify-between border-b border-neutral-800">
       <div>
         <div class="flex items-center gap-2">
@@ -32,75 +35,90 @@
           <span class="capitalize">{{ h.os }}</span>
         </div>
       </div>
-      <button type="button"
-        class="px-4 py-2 rounded-lg bg-neutral-800 hover:bg-neutral-700 text-sm font-medium transition-colors flex items-center"
-        data-host="{{ h.id }}"
-        onclick="return (typeof toggleHost === 'function') ? toggleHost({{ h.id }}, '{{ h.name }}') : false">
-        <span>Monitorizar</span>
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 ml-1" viewBox="0 0 20 20" fill="currentColor">
-          <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
-        </svg>
-      </button>
+
+      <div class="flex items-center gap-2">
+        <button type="button"
+          class="px-4 py-2 rounded-lg bg-neutral-800 hover:bg-neutral-700 text-sm font-medium transition-colors flex items-center"
+          data-host="{{ h.id }}"
+          onclick="return (typeof toggleHost === 'function') ? toggleHost({{ h.id }}, '{{ h.name }}') : false">
+          <span>Monitor</span>
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 ml-1" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
+          </svg>
+        </button>
+      </div>
     </div>
 
-    <!-- Content -->
+    <!-- Card body -->
     <div id="host-{{ h.id }}" class="hidden">
-      <!-- Primary Metrics -->
+      <!-- Primary metrics -->
       <div class="grid grid-cols-3 gap-4 p-4">
+
+        <!-- CPU -->
         <div class="bg-neutral-800 rounded-xl p-4">
           <div class="flex items-center justify-between">
             <div class="text-sm text-neutral-400">CPU</div>
             <div class="text-xs px-2 py-0.5 rounded-full bg-neutral-700/50" id="cpu-load-{{ h.id }}">—</div>
           </div>
-          <div class="mt-1">
+          <div class="mt-1 flex items-baseline gap-1">
             <span class="text-3xl font-bold" id="cpu-{{ h.id }}">—</span>
             <span class="text-neutral-400 text-sm">%</span>
           </div>
-          <div class="h-[120px] mt-3">
+          <div class="h-[120px] mt-3 relative">
             <canvas id="cpuChart-{{ h.id }}"></canvas>
+            <button class="absolute right-2 top-2 text-xs px-2 py-0.5 rounded bg-neutral-700/60 hover:bg-neutral-700"
+                    onclick="openChartModal({{ h.id }}, 'cpu')">Expand</button>
           </div>
+          <div class="text-xs text-neutral-400 mt-2" id="cpu-detail-{{ h.id }}">—</div>
         </div>
 
+        <!-- Memory -->
         <div class="bg-neutral-800 rounded-xl p-4">
           <div class="flex items-center justify-between">
-            <div class="text-sm text-neutral-400">Memoria</div>
+            <div class="text-sm text-neutral-400">Memory</div>
             <div class="text-xs px-2 py-0.5 rounded-full bg-neutral-700/50" id="mem-status-{{ h.id }}">—</div>
           </div>
-          <div class="mt-1">
+          <div class="mt-1 flex items-baseline gap-1">
             <span class="text-3xl font-bold" id="mempct-{{ h.id }}">—</span>
-            <span class="text-neutral-400 text-sm">% libre</span>
+            <span class="text-neutral-400 text-sm">% free</span>
           </div>
           <div class="text-xs text-neutral-400 mt-1" id="memabs-{{ h.id }}">—</div>
-          <div class="h-[120px] mt-2">
+          <div class="h-[120px] mt-2 relative">
             <canvas id="memChart-{{ h.id }}"></canvas>
+            <button class="absolute right-2 top-2 text-xs px-2 py-0.5 rounded bg-neutral-700/60 hover:bg-neutral-700"
+                    onclick="openChartModal({{ h.id }}, 'mem')">Expand</button>
           </div>
+          <div class="text-xs text-neutral-400 mt-2" id="swap-{{ h.id }}">—</div>
         </div>
 
+        <!-- Uptime (text only) -->
         <div class="bg-neutral-800 rounded-xl p-4">
-          <div class="text-sm text-neutral-400">Tiempo Activo</div>
+          <div class="text-sm text-neutral-400">Uptime</div>
           <div class="mt-1">
             <span class="text-3xl font-bold" id="uptime-{{ h.id }}">—</span>
           </div>
-          <div class="h-[120px] mt-3">
-            <canvas id="upChart-{{ h.id }}"></canvas>
-          </div>
+          <div class="text-xs text-neutral-500 mt-3" id="loadavg-{{ h.id }}">—</div>
+          <div class="text-xs text-neutral-500 mt-1" id="sysinfo-{{ h.id }}">—</div>
         </div>
       </div>
 
-      <!-- Secondary Metrics -->
+      <!-- Secondary metrics -->
       <div class="grid grid-cols-3 gap-4 px-4 pb-4">
+
+        <!-- Storage -->
         <div class="bg-neutral-800 rounded-xl p-4 col-span-2">
           <div class="flex items-center justify-between mb-3">
-            <div class="text-sm text-neutral-400">Almacenamiento</div>
-            <div class="text-xs text-neutral-500">Uso / Total · I-nodes</div>
+            <div class="text-sm text-neutral-400">Storage</div>
+            <div class="text-xs text-neutral-500">Used / Total · Inodes</div>
           </div>
           <div id="disks-{{ h.id }}" class="text-sm space-y-2"></div>
         </div>
 
+        <!-- Latency / Network / Processes -->
         <div class="bg-neutral-800 rounded-xl p-4">
           <div class="space-y-4">
             <div>
-              <div class="text-sm text-neutral-400 mb-1">Latencia TCP</div>
+              <div class="text-sm text-neutral-400 mb-1">TCP Latency</div>
               <div class="flex items-baseline gap-1">
                 <span class="text-2xl font-bold" id="lat-{{ h.id }}">—</span>
                 <span class="text-neutral-400 text-sm">ms</span>
@@ -108,20 +126,20 @@
             </div>
 
             <div>
-              <div class="text-sm text-neutral-400 mb-1">Red</div>
-              <div class="text-sm" id="net-{{ h.id }}">—</div>
+              <div class="text-sm text-neutral-400 mb-1">Network</div>
+              <div class="text-sm whitespace-pre leading-5" id="net-{{ h.id }}">—</div>
             </div>
 
             <div>
-              <div class="text-sm text-neutral-400 mb-1">Procesos</div>
+              <div class="text-sm text-neutral-400 mb-1">Processes</div>
               <div class="text-sm" id="procs-{{ h.id }}">—</div>
             </div>
           </div>
         </div>
       </div>
+
     </div>
   </section>
   {% endfor %}
 </div>
 {% endblock %}
-

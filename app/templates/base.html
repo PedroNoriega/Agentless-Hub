@@ -4,22 +4,28 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>Server Monitor Hub</title>
+
+  <!-- Styles -->
   <link rel="stylesheet" href="/static/app.css">
+  <link rel="stylesheet" href="/static/modal.css">
+
   <!-- External Dependencies -->
   <script src="https://unpkg.com/htmx.org@1.9.12"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/luxon@3.4.3/build/global/luxon.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@floating-ui/dom@1.5.1"></script>
-  <!-- Custom Scripts -->
+
+  <!-- App (keep order: app.js first, then modal.js) -->
   <script src="/static/app.js" defer></script>
+  <script src="/static/modal.js" defer></script>
 </head>
+
 <body class="h-full bg-neutral-950 text-neutral-100 antialiased">
-  <!-- Sidebar Navigation -->
-  <div class="fixed inset-y-0 left-0 w-64 bg-neutral-900 border-r border-neutral-800">
+  <!-- Sidebar -->
+  <aside class="fixed inset-y-0 left-0 w-64 bg-neutral-900 border-r border-neutral-800">
     <div class="p-4 border-b border-neutral-800">
       <h1 class="text-xl font-semibold flex items-center gap-2">
         <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-emerald-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01" />
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 8h16M4 16h10" />
         </svg>
         Server Monitor
       </h1>
@@ -28,7 +34,7 @@
       <div class="text-sm text-neutral-400 mb-2">Navigation</div>
       <a href="/" class="flex items-center gap-2 px-3 py-2 rounded-lg bg-neutral-800/50 text-emerald-400">
         <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2" />
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0h6" />
         </svg>
         Dashboard
       </a>
@@ -40,9 +46,9 @@
         <span class="text-sm text-neutral-400">Monitoring Active</span>
       </div>
     </div>
-  </div>
+  </aside>
 
-  <!-- Main Content Area -->
+  <!-- Main -->
   <div class="ml-64">
     <header class="sticky top-0 z-10 bg-neutral-950/80 backdrop-blur-sm border-b border-neutral-800">
       <div class="px-6 py-4 flex items-center justify-between">
@@ -54,12 +60,12 @@
         <div class="flex items-center gap-4">
           <button type="button" id="refresh-all" class="px-3 py-1.5 rounded-lg bg-neutral-800 hover:bg-neutral-700 text-sm font-medium transition-colors flex items-center gap-2">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.6M20 12A8 8 0 104.6 9M20 12h-5" />
             </svg>
             Refresh All
           </button>
           <div class="h-4 border-r border-neutral-800"></div>
-          <button type="button" id="layout-toggle" class="p-1.5 rounded-lg bg-neutral-800 hover:bg-neutral-700 transition-colors">
+          <button type="button" id="layout-toggle" class="p-1.5 rounded-lg bg-neutral-800 hover:bg-neutral-700 transition-colors" title="Toggle layout">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <rect x="3" y="3" width="7" height="7" />
               <rect x="14" y="3" width="7" height="7" />
@@ -70,15 +76,77 @@
         </div>
       </div>
     </header>
+
     <main class="p-6">
       {% block content %}{% endblock %}
     </main>
   </div>
 
-  <!-- Modals Container -->
-  <div id="modal-container"></div>
+  <!-- Modal Root -->
+  <div id="modal-container" class="hidden">
+    <div class="modal-backdrop"></div>
+    <div class="modal-container">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="text-lg font-medium" id="modal-title"></h3>
+          <button type="button" class="p-2 hover:bg-neutral-800 rounded-lg transition-colors" onclick="closeModal()">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="chart-controls">
+            <div class="flex items-center gap-2">
+              <button type="button" class="chart-control-btn active" data-range="1h">1h</button>
+              <button type="button" class="chart-control-btn" data-range="6h">6h</button>
+              <button type="button" class="chart-control-btn" data-range="24h">24h</button>
+            </div>
+            <div class="flex-1"></div>
+            <button type="button" class="chart-control-btn flex items-center gap-2" data-action="refresh">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.6M20 12A8 8 0 104.6 9M20 12h-5" />
+              </svg>
+              Refresh
+            </button>
+          </div>
+          <div class="modal-chart-container">
+            <canvas id="modal-chart"></canvas>
+          </div>
+          <div class="mt-4 text-sm text-neutral-400" id="modal-details"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeModal()">Close</button>
+          <button type="button" class="btn btn-primary" onclick="downloadChartData()">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+            </svg>
+            Download Data
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 
-  <!-- Tooltips Container -->
-  <div id="tooltip-container"></div>
+  <!-- Small utilities only -->
+  <script>
+    // Current time
+    function updateCurrentTime() {
+      const el = document.getElementById('current-time');
+      if (el) el.textContent = new Date().toLocaleTimeString();
+    }
+    setInterval(updateCurrentTime, 1000); updateCurrentTime();
+
+    // Layout toggle
+    document.getElementById('layout-toggle')?.addEventListener('click', () => {
+      const grid = document.getElementById('servers-grid');
+      if (grid) {
+        grid.classList.toggle('2xl:grid-cols-2');
+        grid.classList.toggle('2xl:grid-cols-3');
+      }
+    });
+
+    // ESC & backdrop close are handled inside modal.js as well (idempotent)
+  </script>
 </body>
 </html>

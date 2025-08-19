@@ -1,0 +1,26 @@
+POWERSHELL
+------------------------
+npm install
+npm run build:css
+docker rm -f agentless-hub
+docker build -t agentless-hub .
+docker run -d --name agentless-hub `
+  -p 8080:8080 `
+  -v "${PWD}\config.yml:/app/config.yml" `
+  -v "${PWD}\data:/app/data" `
+  agentless-hub
+docker logs -f agentless-hub
+
+------------------------
+
+CMD
+------------------------
+npm install
+npm run build:css
+docker rm -f agentless-hub >NUL 2>&1 & docker build -t agentless-hub . && docker run -d --name agentless-hub -p 8080:8080 -v "%cd%\config.yml:/app/config.yml" -v "%cd%\data:/app/data" agentless-hub
+docker logs -f agentless-hub
+
+------------------------
+
+
+
