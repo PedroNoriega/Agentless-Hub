@@ -1,0 +1,105 @@
+# Configuración y secretos
+config.yml
+*.env
+.env
+.env.*
+credentials.json
+secrets.yaml
+*.pem
+*.key
+*.cert
+
+# Base de datos y datos
+/data/
+*.db
+*.sqlite
+*.sqlite3
+
+# Dependencias
+node_modules/
+venv/
+env/
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+*.so
+dist/
+build/
+eggs/
+*.egg-info/
+
+# Logs y archivos temporales
+*.log
+*.log.*
+logs/
+tmp/
+temp/
+.tmp/
+*.tmp
+*.bak
+*.swp
+.DS_Store
+Thumbs.db
+
+# Archivos de IDE/editores
+.idea/
+.vscode/
+*.sublime-workspace
+*.sublime-project
+.project
+.settings/
+.classpath
+*.code-workspace
+
+# Archivos de caché
+.cache/
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+.hypothesis/
+.mypy_cache/
+
+# Archivos compilados de JavaScript/TypeScript
+/static/app.css
+/static/*.js.map
+*.min.js
+*.min.css
+
+# Archivos de sistema
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Archivos de compilación Python
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+
+# Archivos de entorno virtual
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Directorios de distribución
+/dist/
+/build/
+/eggs/
+/*.egg-info/
+
+# Testing
+.coverage
+.tox/
+.pytest_cache/
+coverage/
+.coverage.*
+coverage.xml
+*.cover
+.hypothesis/

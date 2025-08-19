@@ -1,0 +1,11 @@
+{
+  "name": "agentless-hub",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build:css": "tailwindcss -i ./app/static/src/main.css -o ./app/static/app.css"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.3.3"
+  }
+}

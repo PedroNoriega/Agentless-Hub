@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Server Monitor Hub</title>
+  <link rel="stylesheet" href="/static/app.css">
+  <!-- External Dependencies -->
+  <script src="https://unpkg.com/htmx.org@1.9.12"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/luxon@3.4.3/build/global/luxon.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@floating-ui/dom@1.5.1"></script>
+  <!-- Custom Scripts -->
+  <script src="/static/app.js" defer></script>
+</head>
+<body class="h-full bg-neutral-950 text-neutral-100 antialiased">
+  <!-- Sidebar Navigation -->
+  <div class="fixed inset-y-0 left-0 w-64 bg-neutral-900 border-r border-neutral-800">
+    <div class="p-4 border-b border-neutral-800">
+      <h1 class="text-xl font-semibold flex items-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-emerald-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2m-2-4h.01M17 16h.01" />
+        </svg>
+        Server Monitor
+      </h1>
+    </div>
+    <nav class="p-4">
+      <div class="text-sm text-neutral-400 mb-2">Navigation</div>
+      <a href="/" class="flex items-center gap-2 px-3 py-2 rounded-lg bg-neutral-800/50 text-emerald-400">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2" />
+        </svg>
+        Dashboard
+      </a>
+    </nav>
+    <div class="absolute bottom-0 left-0 right-0 p-4 border-t border-neutral-800">
+      <div class="text-xs text-neutral-500">System Status</div>
+      <div class="mt-1 flex items-center gap-2">
+        <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+        <span class="text-sm text-neutral-400">Monitoring Active</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content Area -->
+  <div class="ml-64">
+    <header class="sticky top-0 z-10 bg-neutral-950/80 backdrop-blur-sm border-b border-neutral-800">
+      <div class="px-6 py-4 flex items-center justify-between">
+        <div class="flex items-center gap-4">
+          <h2 class="text-lg font-medium" id="page-title">Dashboard</h2>
+          <div class="h-4 border-r border-neutral-800"></div>
+          <div class="text-sm text-neutral-400" id="current-time"></div>
+        </div>
+        <div class="flex items-center gap-4">
+          <button type="button" id="refresh-all" class="px-3 py-1.5 rounded-lg bg-neutral-800 hover:bg-neutral-700 text-sm font-medium transition-colors flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+            Refresh All
+          </button>
+          <div class="h-4 border-r border-neutral-800"></div>
+          <button type="button" id="layout-toggle" class="p-1.5 rounded-lg bg-neutral-800 hover:bg-neutral-700 transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="7" height="7" />
+              <rect x="14" y="3" width="7" height="7" />
+              <rect x="14" y="14" width="7" height="7" />
+              <rect x="3" y="14" width="7" height="7" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </header>
+    <main class="p-6">
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+
+  <!-- Modals Container -->
+  <div id="modal-container"></div>
+
+  <!-- Tooltips Container -->
+  <div id="tooltip-container"></div>
+</body>
+</html>

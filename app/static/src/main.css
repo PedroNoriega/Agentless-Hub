@@ -1,0 +1,16 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom styles */
+.sparkline {
+  @apply transition-opacity duration-200;
+}
+
+.server-card {
+  @apply transition-all duration-300 hover:border-neutral-700;
+}
+
+.metric-card {
+  @apply transition-all duration-200 hover:bg-neutral-700/50;
+}

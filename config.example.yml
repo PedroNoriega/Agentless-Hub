@@ -1,0 +1,20 @@
+
+hosts:
+  - name: linux-44
+    ip: 192.x.x.x
+    os: linux
+    ssh:
+      username: username
+      password: "password*"
+      port: 22
+
+  # Ejemplo Windows (opcional)
+  # - name: win-192
+  #   ip: 192.168.90.192
+  #   os: windows
+  #   winrm:
+  #     username: Administrador
+  #     password: "TuPass"
+  #     scheme: http  # https si tienes cert
+  #     port: 5985    # 5986 si https
+  #     verify_ssl: false
